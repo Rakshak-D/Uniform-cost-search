@@ -9,25 +9,46 @@ typedef struct
     char name[50];
     int cost;
     char path[100][50]; // To store the path
-    int pathLength;           // Length of the path
+    int pathLength;     // Length of the path
 } Node;
-
-// Priority Queue for UCS
+// stucture for priority queue
 typedef struct
 {
     Node nodes[100];
     int size;
 } PriorityQueue;
-
-// Graph structure
+// structure for graph
 typedef struct
 {
     char source[50];
     char destination[50];
     int cost;
 } Edge;
-
+//declaring all functions
+void push(PriorityQueue *pq, char *name, int cost, char path[100][50], int pathLength);
+Node pop(PriorityQueue *pq);
+Node pop(PriorityQueue *pq);
+void uniformCostSearch(Edge graph[], int edges, char *start, char *goal);
+int readGraph(char *filename, Edge graph[]);
 // Function to insert into the priority queue
+int main()
+{
+    Edge graph[100];
+    int edges = readGraph("graph.csv", graph);
+    if (edges == 0) {
+        printf("No graph data available.\n");
+        return 1;
+    }
+    char start[50], goal[50];
+    printf("Enter source: ");
+    scanf("%s", start);
+    printf("Enter destination: ");
+    scanf("%s", goal);
+    strupr(start);
+    strupr(goal);
+    uniformCostSearch(graph, edges, start, goal);
+    return 0;
+}
 void push(PriorityQueue *pq, char *name, int cost, char path[100][50], int pathLength)
 {
     Node newNode;
@@ -42,7 +63,6 @@ void push(PriorityQueue *pq, char *name, int cost, char path[100][50], int pathL
     newNode.pathLength++;
 
     pq->nodes[pq->size++] = newNode;
-
     // Sort the queue based on cost
     for (int i = pq->size - 1; i > 0; i--) {
         if (pq->nodes[i].cost < pq->nodes[i - 1].cost)
@@ -53,7 +73,6 @@ void push(PriorityQueue *pq, char *name, int cost, char path[100][50], int pathL
         }
     }
 }
-
 // Function to remove the minimum-cost node
 Node pop(PriorityQueue *pq)
 {
@@ -64,23 +83,19 @@ Node pop(PriorityQueue *pq)
     pq->size--;
     return min;
 }
-
-// UCS Algorithm
-void uniformCostSearch(Edge graph[], int edges, char *start, char *goal) {
+// Unidrom Cost Search Algorithm
+void uniformCostSearch(Edge graph[], int edges, char *start, char *goal)
+ {
     PriorityQueue pq;
     pq.size = 0;
-
     // Initialize the priority queue with the start node
     char initialPath[100][50] = {""};
     push(&pq, start, 0, initialPath, 0);
-
     // Track visited nodes
     char visited[100][50];
     int visitedCount = 0;
-
     while (pq.size > 0) {
         Node current = pop(&pq);
-
         // Check if the node is already visited
         int alreadyVisited = 0;
         for (int i = 0; i < visitedCount; i++) {
@@ -90,10 +105,8 @@ void uniformCostSearch(Edge graph[], int edges, char *start, char *goal) {
             }
         }
         if (alreadyVisited) continue;
-
-        // Mark the current node as visited
+        // mark the current node as visited
         strcpy(visited[visitedCount++], current.name);
-
         // If goal is reached
         if (strcasecmp(current.name, goal) == 0)
          {
@@ -107,7 +120,6 @@ void uniformCostSearch(Edge graph[], int edges, char *start, char *goal) {
             printf("\n");
             return;
         }
-
         // Add neighbors to the queue
         for (int i = 0; i < edges; i++)
         {
@@ -116,56 +128,23 @@ void uniformCostSearch(Edge graph[], int edges, char *start, char *goal) {
             }
         }
     }
-
     printf("No route found from %s to %s\n", start, goal);
 }
-
-// Read graph from CSV file
+// Read data from CSV file
 int readGraph(char *filename, Edge graph[])
 {
     FILE *file = fopen(filename, "r");
-    if (!file) {
+    if (file==NULL) {
         printf("Error: Could not open file %s\n", filename);
         return 0;
     }
-
     char line[100];
     int count = 0;
-
-    while (fgets(line, sizeof(line), file)) {
+    while (fgets(line, sizeof(line), file)) 
+    {
         sscanf(line, "%[^,],%[^,],%d", graph[count].source, graph[count].destination, &graph[count].cost);
         count++;
     }
-
     fclose(file);
     return count;
-}
-void toUpperCaseString(char *str)
-{
-    for (int i = 0; str[i] != '\0'; i++)
-    {
-        str[i] = toupper(str[i]); // Convert each character to uppercase
-    }
-}
-int main()
-{
-    Edge graph[100];
-    int edges = readGraph("graph.csv", graph);
-
-    if (edges == 0) {
-        printf("No graph data available.\n");
-        return 1;
-    }
-
-    char start[50], goal[50];
-    printf("Enter source: ");
-    scanf("%s", start);
-    printf("Enter destination: ");
-    scanf("%s", goal);
-    toUpperCaseString(start);
-    toUpperCaseString(goal);
-
-    uniformCostSearch(graph, edges, start, goal);
-
-    return 0;
 }
