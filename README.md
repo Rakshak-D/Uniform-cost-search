@@ -120,7 +120,7 @@ Contributions are welcome! Please follow these steps:
 For queries or suggestions, feel free to reach out:
 
 - **Email:** rakshakmce@gmail.com
-- **GitHub:** [Rakshak-D](https://github.com/Rakshak-D)
+- **GitHub:** [@Rakshak-D](https://github.com/Rakshak-D)
 
 ---
 
